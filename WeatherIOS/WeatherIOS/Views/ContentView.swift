@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var locationManager = LocationManager();
-    @State var weather: ResponseBody?
+    @State var weather: ResponseBody?;
     var weatherManager = WeatherManager();
     
     var body: some View {
@@ -30,10 +30,10 @@ struct ContentView: View {
 //                Text("Your coordinates are \(location.latitude), \(location.longitude)")
             } else {
                 if locationManager.isLoading {
-                    LoadingView()
+                    LoadingView();
                 } else {
                     WelcomeView()
-                        .environmentObject(locationManager)
+                        .environmentObject(locationManager);
                 }
             }
             
@@ -45,6 +45,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView();
     }
 }

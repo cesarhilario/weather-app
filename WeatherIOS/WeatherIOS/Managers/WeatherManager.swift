@@ -33,6 +33,7 @@ struct ResponseBody: Decodable {
     var main: MainResponse;
     var name: String;
     var wind: WindResponse;
+    var id: Int
 
     struct CoordinatesResponse: Decodable {
         var lon: Double;

@@ -6,21 +6,47 @@
 //
 
 import SwiftUI
+import Combine
 
 struct WeatherView: View {
-    var weather: ResponseBody
+    var weather: ResponseBody;
+    @ObservedObject var favoriteManager: FavoriteManager;
+    
+    @State var isFavorite: Bool = false;
+    @State var isToastShowing: Bool = false;
     
     var body: some View {
         ZStack(alignment: .leading) {
             VStack {
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(weather.name)
-                        .bold().font(.title)
+                    HStack {
+                        Text(weather.name)
+                            .bold().font(.title)
+                        Button(action: {
+                            isFavorite = !isFavorite;
+                            isToastShowing = !isToastShowing;
+                            
+                            if(isFavorite) {
+                                try? favoriteManager.add(id: weather.id, name: weather.name);
+                            } else {
+                                try? favoriteManager.remove(id: weather.id);
+                            }
+                        }) {
+                            if (self.isFavorite) {
+                                Image(systemName: "star.fill")
+                                    .frame(width: 25, height: 25)
+                                    .foregroundColor(Color("yellow"))
+                            } else {
+                                Image(systemName: "star")
+                                    .frame(width: 25, height: 25)
+                                    .foregroundColor(.white)
+                            }
+                        }
+                    }
                     Text("Today, \(Date().formatted(.dateTime.month().day().hour().minute()))")
+                    
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Spacer()
                 
                 VStack {
                     HStack {
@@ -46,7 +72,6 @@ struct WeatherView: View {
                             .padding()
                     }
                     
-                    Spacer()
                     
                     Image(getIllustrationByPartOfTheDay(partOfTheDay: getPartOfTheDay()))
                         .resizable()
@@ -55,7 +80,7 @@ struct WeatherView: View {
                         .cornerRadius(125)
                     
                     Spacer()
-                        .frame(height: 300)
+                        .frame(height: 340)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -81,8 +106,9 @@ struct WeatherView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .padding(.bottom, 20)
+                .padding(.horizontal, 40)
+                .padding(.top, 30)
+                .padding(.bottom, 100)
                 .foregroundColor(Color(getColorByPartOfTheDay(partOfTheDay: getPartOfTheDay())))
                 .background(.white)
                 .cornerRadius(20, corners: [.topLeft, .topRight])
@@ -91,11 +117,12 @@ struct WeatherView: View {
         .edgesIgnoringSafeArea(.bottom)
         .background(Color(getColorByPartOfTheDay(partOfTheDay: getPartOfTheDay())))
         .preferredColorScheme(.dark)
+        .toast(message: isFavorite ? "Added to favorites" : "Removed from favorites", isShowing: $isToastShowing, duration: 2.0)
     }
 }
 
 struct WeatherView_Previews: PreviewProvider {
     static var previews: some View {
-        WeatherView(weather: previewWeather)
+        WeatherView(weather: previewWeather, favoriteManager: FavoriteManager())
     }
 }

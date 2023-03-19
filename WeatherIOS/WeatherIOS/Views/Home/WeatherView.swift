@@ -46,6 +46,7 @@ struct WeatherView: View {
                     Text("Today, \(Date().formatted(.dateTime.month().day().hour().minute()))")
                     
                 }
+                .padding(.top, 90)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 VStack {
